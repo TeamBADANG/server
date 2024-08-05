@@ -39,7 +39,7 @@ jobs:
         run: docker build -t badang-server .
 
       - name: Docker 이미지에 Tag 생성
-        run: docker badang-server ${{ steps.login-ecr-outputs.registry }}/badang-server:latest
+        run: docker tag badang-server ${{ steps.login-ecr-outputs.registry }}/badang-server:latest
 
       - name: ECR에 Docker 이미지 Push
         run: docker push ${{ steps.login-ecr.outputs.registry }}/badang-server:latest
