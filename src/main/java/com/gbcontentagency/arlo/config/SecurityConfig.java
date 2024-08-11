@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -53,8 +54,7 @@ public class SecurityConfig {
                         corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
                         corsConfiguration.setMaxAge(1800L);
 
-                        corsConfiguration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-                        corsConfiguration.setExposedHeaders(Collections.singletonList("Authorization"));
+                        corsConfiguration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
 
                         return corsConfiguration;
                     }
