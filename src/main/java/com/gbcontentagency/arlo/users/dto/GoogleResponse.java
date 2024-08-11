@@ -13,7 +13,7 @@ public class GoogleResponse implements OAuth2Response {
     @Override
     public String getProvider() {
 
-        return "GOOGLE";
+        return "google";
     }
 
     @Override
