@@ -77,6 +77,9 @@ public class SecurityConfig {
                 );
 
         http
+                .requiresChannel(channel -> channel
+                        .anyRequest().requiresSecure()
+                )
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/", "/images/**", "/healthcheck").permitAll()
                         .anyRequest().authenticated());
