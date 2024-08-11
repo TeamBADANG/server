@@ -55,7 +55,7 @@ public class CustomOAuth2UserEntity implements OAuth2User {
         return profileImg != null ? profileImg : "";
     }
 
-    public String username() {
+    public String getUsername() {
 
         String username = userDto.getUsername();
 
