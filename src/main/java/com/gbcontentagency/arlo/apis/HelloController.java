@@ -16,20 +16,11 @@ public class HelloController {
         return "index";
     }
 
-    @GetMapping("/healthcheck")
-    public String healthcheck(Model model) {
-
-        model.addAttribute("title", "Girin World");
-        model.addAttribute("message", "This is healthCheck Page");
-
-        return "index";
-    }
-
-    @GetMapping("/test")
+    @GetMapping("/admin")
     public String test(Model model) {
 
         model.addAttribute("title", "Girin World");
-        model.addAttribute("message", "Hi, there! This is Test Page");
+        model.addAttribute("message", "Hi, there! This is Admin Page");
 
         return "index";
     }

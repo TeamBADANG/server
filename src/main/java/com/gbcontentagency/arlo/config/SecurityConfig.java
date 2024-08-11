@@ -19,12 +19,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .oauth2Login(Customizer.withDefaults());
+                .httpBasic(AbstractHttpConfigurer::disable);
+//                .oauth2Login(Customizer.withDefaults());
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/healthcheck").permitAll()
+                        .requestMatchers("/", "/images/**", "/healthcheck").permitAll()
                         .anyRequest().authenticated());
 
         http
