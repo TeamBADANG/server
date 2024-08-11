@@ -24,7 +24,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/", "/healthcheck").permitAll()
                         .anyRequest().authenticated());
 
         http
