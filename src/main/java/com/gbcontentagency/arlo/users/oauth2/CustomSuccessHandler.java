@@ -36,7 +36,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = "BEARER " + jwtUtil.generateToken(username, role, nickname, profileImg);
 
         response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("/");
     }
 
     private Cookie createCookie(String key, String value) {
