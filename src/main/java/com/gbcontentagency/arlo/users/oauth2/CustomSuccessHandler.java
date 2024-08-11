@@ -33,7 +33,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String nickname = customUserDetails.getName();
         String profileImg = customUserDetails.getProfileImg();
 
-        String token = "BEARER " + jwtUtil.generateToken(username, role, nickname, profileImg);
+        String token = "BEARER_" + jwtUtil.generateToken(username, role, nickname, profileImg);
 
         response.addCookie(createCookie("Authorization", token));
         response.sendRedirect("https://girin.world/");
