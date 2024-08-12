@@ -17,6 +17,9 @@ import java.util.Iterator;
 @Component
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    public static final int JWT_ACCESS_EXPIRATION_TIME = 1000 * 60 * 10;
+    public static final int JWT_REFRESH_EXPIRATION_TIME = 1000 * 60 * 60 * 24;
+
     private final JwtUtil jwtUtil;
 
     public CustomSuccessHandler(JwtUtil jwtUtil) {
@@ -33,16 +36,25 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String nickname = customUserDetails.getName();
         String profileImg = customUserDetails.getProfileImg();
 
-        String token = "BEARER_" + jwtUtil.generateToken(username, role, nickname, profileImg);
+        String accessToken = "BEARER_" + jwtUtil.generateToken(username, "access", role, nickname, profileImg, JWT_ACCESS_EXPIRATION_TIME);
+        String refreshToken = "BEARER_" + jwtUtil.generateToken(username, "refresh", role, nickname, profileImg, JWT_REFRESH_EXPIRATION_TIME);
 
-        response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("https://girin.world/");
+        response.addCookie(createCookie("Authorization", accessToken));
+        response.addCookie(createCookie("Refresh-Token", refreshToken));
+        response.sendRedirect("https://e6fe-118-176-146-86.ngrok-free.app");
     }
 
     private Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(1800);
+
+        if (key.equals("Authorization")) {
+            cookie.setMaxAge(JWT_ACCESS_EXPIRATION_TIME / 1000);
+        } else {
+            cookie.setMaxAge(JWT_REFRESH_EXPIRATION_TIME / 1000);
+
+        }
+
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);

@@ -8,19 +8,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HelloController {
 
     @GetMapping("/")
-    public String hello(Model model) {
+    public String hello() {
 
-        model.addAttribute("title", "Girin World");
-        model.addAttribute("message", "Hi, there! This is Girin's world!");
-
-        return "index";
+        return "redirect:https://e6fe-118-176-146-86.ngrok-free.app";
     }
 
-    @GetMapping("/admin")
+    @GetMapping("/my")
     public String test(Model model) {
 
-        model.addAttribute("title", "Girin World");
-        model.addAttribute("message", "Hi, there! This is Admin Page");
+        model.addAttribute("title", "Private Space");
+        model.addAttribute("message", "Welcome! This is a private space");
 
         return "index";
     }

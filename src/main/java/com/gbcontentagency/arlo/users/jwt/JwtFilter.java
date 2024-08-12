@@ -2,6 +2,7 @@ package com.gbcontentagency.arlo.users.jwt;
 
 import com.gbcontentagency.arlo.users.dto.UserDto;
 import com.gbcontentagency.arlo.users.oauth2.CustomOAuth2UserEntity;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -44,18 +45,29 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = authorization.substring(7);
-        if (jwtUtil.isExpired(token)) {
+        String accessToken = authorization.substring(7);
+        try {
+
+            jwtUtil.isExpired(accessToken);
+        } catch (ExpiredJwtException e) {
 
             filterChain.doFilter(request, response);
 
             return;
         }
 
-        String username = jwtUtil.getUsername(token);
-        String role = jwtUtil.getRole(token);
-        String nickname = jwtUtil.getNickname(token);
-        String profileImg = jwtUtil.getProfileImg(token);
+        String category = jwtUtil.getCategory(accessToken);
+        if (category == null || !category.equals("access")) {
+
+            filterChain.doFilter(request, response);
+
+            return;
+        }
+
+        String username = jwtUtil.getUsername(accessToken);
+        String role = jwtUtil.getRole(accessToken);
+        String nickname = jwtUtil.getNickname(accessToken);
+        String profileImg = jwtUtil.getProfileImg(accessToken);
 
         UserDto userDto = UserDto.builder()
                 .username(username)

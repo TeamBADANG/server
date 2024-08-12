@@ -12,8 +12,6 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    public static final int JWT_EXPIRATION_TIME = 30 * 60 * 1000;
-
     private SecretKey secretKey;
 
     public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
@@ -24,6 +22,11 @@ public class JwtUtil {
     public String getUsername(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
+    }
+
+    public String getCategory(String token) {
+
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
     }
 
     public String getRole(String token) {
@@ -46,15 +49,16 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String generateToken(String username, String role, String nickname, String profileImg) {
+    public String generateToken(String username, String category, String role, String nickname, String profileImg, int expiration) {
 
         return Jwts.builder()
                 .claim("username", username)
+                .claim("category", category)
                 .claim("role", role)
                 .claim("nickname", nickname)
                 .claim("profileImg", profileImg)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_TIME))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(secretKey)
                 .compact();
     }

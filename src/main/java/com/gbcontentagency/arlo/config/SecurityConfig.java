@@ -28,7 +28,9 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler, JwtUtil jwtUtil) {
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService,
+                          CustomSuccessHandler customSuccessHandler,
+                          JwtUtil jwtUtil) {
         this.customOAuth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
         this.jwtUtil = jwtUtil;
@@ -76,7 +78,9 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/images/**", "/healthcheck").permitAll()
+                        .requestMatchers("/", "/healthcheck").permitAll()
+                        .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/reissue").permitAll()
                         .anyRequest().authenticated());
 
         http
