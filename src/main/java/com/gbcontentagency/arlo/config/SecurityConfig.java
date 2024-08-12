@@ -78,7 +78,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/healthcheck").permitAll()
+                        .requestMatchers("/", "/main", "/healthcheck").permitAll()
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/reissue").permitAll()
                         .anyRequest().authenticated());
