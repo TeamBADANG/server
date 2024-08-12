@@ -26,7 +26,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        OAuth2Response oAuth2Response = null;
+        OAuth2Response oAuth2Response;
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         if (registrationId.equals("naver")) {
 
@@ -46,40 +46,23 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (foundUser == null) {
 
-            UserEntity newUser = updateUser(username, oAuth2Response);
+            UserEntity newUser = new UserEntity(username, oAuth2Response);
 
             userRepository.save(newUser);
 
-            UserDto userDto = createOAuthUserDto(username, oAuth2Response);
+            UserDto userDto = new UserDto(newUser);
 
             return new CustomOAuth2UserEntity(userDto);
         } else {
-            foundUser = updateUser(username, oAuth2Response);
+
+            foundUser.update(oAuth2Response);
 
             userRepository.save(foundUser);
 
-            UserDto userDto = createOAuthUserDto(username, oAuth2Response);
+            UserDto userDto = new UserDto(foundUser);
 
             return new CustomOAuth2UserEntity(userDto);
         }
-    }
-
-    private static UserEntity updateUser(String username, OAuth2Response oAuth2Response) {
-
-        return UserEntity.builder()
-                .username(username)
-                .oAuth2Response(oAuth2Response)
-                .build();
-    }
-
-    private static UserDto createOAuthUserDto(String username, OAuth2Response oAuth2Response) {
-
-        return UserDto.builder()
-                .role("ROLE_USER")
-                .username(username)
-                .nickname(oAuth2Response.getNickname())
-                .profileImg(oAuth2Response.getProfileImage())
-                .build();
     }
 
 }
