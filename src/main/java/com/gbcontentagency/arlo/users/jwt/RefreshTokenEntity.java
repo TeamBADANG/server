@@ -16,13 +16,13 @@ public class RefreshTokenEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String username;
 
-    @Column
+    @Column(nullable = false, length = 600)
     private String refreshToken;
 
-    @Column
+    @Column(nullable = false)
     private Date expriration;
 
     @Builder

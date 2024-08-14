@@ -19,14 +19,14 @@ public class UserEntity {
     @Column(unique = true)
     private String username;
 
-    @Column
+    @Column(nullable = false)
     private String role;
 
-    @Column
-    private String nickname;
+    @Column(nullable = false)
+    private String nickname = "Anonymous";
 
-    @Column
-    private String profileImg;
+    @Column(nullable = false)
+    private String profileImg = "/images/defaultProfileImg.png";
 
     @Builder
     public UserEntity(String username, OAuth2Response oAuth2Response) {
