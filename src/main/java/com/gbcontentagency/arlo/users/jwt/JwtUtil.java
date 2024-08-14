@@ -14,10 +14,10 @@ import java.util.Date;
 public class JwtUtil {
 
     @Value("${spring.jwt.access.expiration}")
-    private static int JWT_ACCESS_EXPIRATION_TIME;
+    private int JWT_ACCESS_EXPIRATION_TIME;
 
     @Value("${spring.jwt.refresh.expiration}")
-    private static int JWT_REFRESH_EXPIRATION_TIME;
+    private int JWT_REFRESH_EXPIRATION_TIME;
 
     private final SecretKey secretKey;
 
@@ -112,6 +112,9 @@ public class JwtUtil {
     }
 
     public void saveRefreshToken(String username, String refreshToken, Date expiration) {
+
+        Boolean isExist = refreshTokenRepository.existsByUsername(username);
+        if(isExist) refreshTokenRepository.deleteAllByusername(username);
 
         RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder()
                 .username(username)
