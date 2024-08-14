@@ -1,6 +1,7 @@
 package com.gbcontentagency.arlo.users.jwt;
 
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +13,21 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private SecretKey secretKey;
+    @Value("${spring.jwt.access.expiration}")
+    private static int JWT_ACCESS_EXPIRATION_TIME;
 
-    public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
-        secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
+    @Value("${spring.jwt.refresh.expiration}")
+    private static int JWT_REFRESH_EXPIRATION_TIME;
+
+    private final SecretKey secretKey;
+
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public JwtUtil(@Value("${spring.jwt.secret}") String secret,
+                   RefreshTokenRepository refreshTokenRepository) {
+        this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
                 Jwts.SIG.HS256.key().build().getAlgorithm());
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     public String getUsername(String token) {
@@ -44,12 +55,17 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("profileImg", String.class);
     }
 
+    public Date getExpiration(String token) {
+
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration();
+    }
+
     public Boolean isExpired(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String generateToken(String username, String category, String role, String nickname, String profileImg, int expiration) {
+    public String generateAccessToken(String username, String category, String role, String nickname, String profileImg) {
 
         return Jwts.builder()
                 .claim("username", username)
@@ -58,9 +74,52 @@ public class JwtUtil {
                 .claim("nickname", nickname)
                 .claim("profileImg", profileImg)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .expiration(new Date(System.currentTimeMillis() + JWT_ACCESS_EXPIRATION_TIME))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public String generateRefreshToken(String username, String category, String role, String nickname, String profileImg) {
+
+        return Jwts.builder()
+                .claim("username", username)
+                .claim("category", category)
+                .claim("role", role)
+                .claim("nickname", nickname)
+                .claim("profileImg", profileImg)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + JWT_REFRESH_EXPIRATION_TIME))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public Cookie createCookie(String key, String value) {
+
+        Cookie cookie = new Cookie(key, value);
+
+        if (key.equals("Authorization")) {
+            cookie.setMaxAge(JWT_ACCESS_EXPIRATION_TIME / 1000);
+        } else {
+            cookie.setMaxAge(JWT_REFRESH_EXPIRATION_TIME / 1000);
+
+        }
+
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+
+        return cookie;
+    }
+
+    public void saveRefreshToken(String username, String refreshToken, Date expiration) {
+
+        RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder()
+                .username(username)
+                .refreshToken(refreshToken)
+                .expriration(expiration)
+                .build();
+
+        refreshTokenRepository.save(refreshTokenEntity);
     }
 
 }
