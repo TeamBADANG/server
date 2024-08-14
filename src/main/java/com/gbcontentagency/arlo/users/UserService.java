@@ -1,6 +1,7 @@
 package com.gbcontentagency.arlo.users;
 
 import com.gbcontentagency.arlo.users.jwt.JwtUtil;
+import com.gbcontentagency.arlo.users.jwt.RefreshTokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,15 +10,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 public class UserService {
 
-    public static final int JWT_ACCESS_EXPIRATION_TIME = 1000 * 60 * 10;
-
     private final JwtUtil jwtUtil;
 
-    public UserService(JwtUtil jwtUtil) {
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    public UserService(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
         this.jwtUtil = jwtUtil;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     public ResponseEntity<String> reissueToken(HttpServletRequest request, HttpServletResponse response) {
@@ -43,25 +47,35 @@ public class UserService {
         try {
 
             jwtUtil.isExpired(refreshToken);
-        }catch (ExpiredJwtException e) {
+        } catch (ExpiredJwtException e) {
 
             return new ResponseEntity<>("Refresh Token is expired", HttpStatus.BAD_REQUEST);
         }
 
         String category = jwtUtil.getCategory(refreshToken);
-        if (category ==null || !category.equals("refresh")) {
+        if (category == null || !category.equals("refresh")) {
 
             return new ResponseEntity<>("Invalid Refresh Token", HttpStatus.BAD_REQUEST);
         }
+
+        Boolean isExist = refreshTokenRepository.existsByRefreshToken(refreshToken);
+        if (!isExist) return new ResponseEntity<>("Invalid Refresh Token", HttpStatus.BAD_REQUEST);
 
         String username = jwtUtil.getUsername(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
         String nickname = jwtUtil.getNickname(refreshToken);
         String profileImg = jwtUtil.getProfileImg(refreshToken);
 
-        String newAccessToken = "BEARER_" + jwtUtil.generateToken(username, "access", role, nickname, profileImg, JWT_ACCESS_EXPIRATION_TIME);
+        String newAccessToken = jwtUtil.generateAccessToken(username, "access", role, nickname, profileImg);
+        String newRefreshToken = jwtUtil.generateRefreshToken(username, "refresh", role, nickname, profileImg);
 
-        response.setHeader("Authorization", newAccessToken);
+        refreshTokenRepository.deleteByRefreshToken(refreshToken);
+
+        Date newRefreshTokenExpiration = jwtUtil.getExpiration(newRefreshToken);
+        jwtUtil.saveRefreshToken(username, newRefreshToken, newRefreshTokenExpiration);
+
+        response.addCookie(jwtUtil.createCookie("Authorization", "BEARER_" + newAccessToken));
+        response.addCookie(jwtUtil.createCookie("Refresh-Token", "BEARER_" + newRefreshToken));
 
         return new ResponseEntity<>("CLEAR", HttpStatus.OK);
     }
