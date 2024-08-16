@@ -6,6 +6,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class CustomOAuth2UserEntity implements OAuth2User {
@@ -19,7 +20,14 @@ public class CustomOAuth2UserEntity implements OAuth2User {
     @Override
     public Map<String, Object> getAttributes() {
 
-        return null;
+        Map<String, Object> attributes = new HashMap<>();
+
+        attributes.put("username", userDto.getUsername());
+        attributes.put("nickname", userDto.getNickname());
+        attributes.put("profileImg", userDto.getProfileImg());
+        attributes.put("role", userDto.getRole());
+
+        return attributes;
     }
 
     @Override
