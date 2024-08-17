@@ -23,7 +23,6 @@ public class UserDto {
         this.profileImg = profileImg;
     }
 
-    @Builder
     public UserDto(UserEntity user) {
         this.username = user.getUsername();
         this.role = user.getRole();

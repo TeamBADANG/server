@@ -90,4 +90,5 @@ public class TravelEntity {
         this.accommodationBudget = travelDto.getAccommodationBudget();
         this.specialConsiderations = travelDto.getSpecialConsiderations();
     }
+
 }
