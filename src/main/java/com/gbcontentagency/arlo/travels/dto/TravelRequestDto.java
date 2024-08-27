@@ -1,6 +1,5 @@
 package com.gbcontentagency.arlo.travels.dto;
 
-import com.gbcontentagency.arlo.users.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,13 +30,11 @@ public class TravelRequestDto {
 
     List<String> specialConsiderations;
 
-    UserEntity user;
-
     @Builder
     public TravelRequestDto(String travelDuration, String transportType, List<String> mainPurpose,
                             List<String> foodType, List<String> diningStyle, String outdoorPreference,
                             String accommodationType, List<String> accommodationFacilities, String accommodationBudget,
-                            List<String> specialConsiderations, UserEntity user) {
+                            List<String> specialConsiderations) {
         this.travelDuration = (travelDuration != null) ? travelDuration : "당일치기";
         this.transportType = (transportType != null) ? transportType : "대중교통, 자차 옵션 각각 추천";
         this.mainPurpose = (mainPurpose != null) ? mainPurpose : List.of("여행 목적 상관없이 여행 코스 추천");
@@ -48,7 +45,6 @@ public class TravelRequestDto {
         this.accommodationFacilities = (accommodationFacilities != null) ? accommodationFacilities : List.of("부대시설 상관없이 추천");
         this.accommodationBudget = (accommodationBudget != null) ? accommodationBudget : "예산 상관없이 추천";
         this.specialConsiderations = (specialConsiderations != null) ? specialConsiderations : List.of("별도 고려 사항 없음");
-        this.user = user;
     }
 
 }

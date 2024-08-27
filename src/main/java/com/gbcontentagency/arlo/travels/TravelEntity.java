@@ -1,6 +1,5 @@
 package com.gbcontentagency.arlo.travels;
 
-import com.gbcontentagency.arlo.travels.dto.TravelRequestDto;
 import com.gbcontentagency.arlo.users.UserEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -9,8 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Getter
 @NoArgsConstructor
+@Getter
 @Table(name = "travels")
 @Entity
 public class TravelEntity {
@@ -76,19 +75,6 @@ public class TravelEntity {
         this.accommodationBudget = accommodationBudget;
         this.specialConsiderations = specialConsiderations;
         this.user = user;
-    }
-
-    public TravelEntity(TravelRequestDto travelDto) {
-        this.travelDuration = travelDto.getTravelDuration();
-        this.transportType = travelDto.getTransportType();
-        this.mainPurpose = travelDto.getMainPurpose();
-        this.foodType = travelDto.getFoodType();
-        this.diningStyle = travelDto.getDiningStyle();
-        this.outdoorPreference = travelDto.getOutdoorPreference();
-        this.accommodationType = travelDto.getAccommodationType();
-        this.accommodationFacilities = travelDto.getAccommodationFacilities();
-        this.accommodationBudget = travelDto.getAccommodationBudget();
-        this.specialConsiderations = travelDto.getSpecialConsiderations();
     }
 
 }
