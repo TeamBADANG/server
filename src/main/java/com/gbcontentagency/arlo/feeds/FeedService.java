@@ -4,8 +4,13 @@ import com.gbcontentagency.arlo.feeds.dto.FeedRequestDto;
 import com.gbcontentagency.arlo.feeds.dto.FeedResponseDto;
 import com.gbcontentagency.arlo.users.UserEntity;
 import jakarta.security.auth.message.AuthException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,6 +20,19 @@ public class FeedService {
 
     public FeedService(FeedRepository feedRepository) {
         this.feedRepository = feedRepository;
+    }
+
+    public Page<FeedResponseDto> getAllFeeds(Pageable pageable) {
+
+        List<FeedEntity> allFeeds = feedRepository.findAll();
+        allFeeds.sort((Comparator.comparing(FeedEntity::getCreatedDate).reversed()));
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allFeeds.size());
+        List<FeedEntity> pagedFeeds = allFeeds.subList(start, end);
+
+        return new PageImpl<>(pagedFeeds, pageable, allFeeds.size())
+                .map(FeedResponseDto::of);
     }
 
     public FeedResponseDto createFeed(UserEntity user, FeedRequestDto feedRequestDto) {

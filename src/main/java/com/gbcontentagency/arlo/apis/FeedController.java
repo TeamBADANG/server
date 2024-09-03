@@ -8,6 +8,10 @@ import com.gbcontentagency.arlo.users.UserRepository;
 import com.gbcontentagency.arlo.users.oauth2.CustomOAuth2UserEntity;
 import jakarta.security.auth.message.AuthException;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +29,19 @@ public class FeedController {
         this.feedService = feedService;
         this.userRepository = userRepository;
     }
+
+    @GetMapping("/")
+    public ResponseEntity<Page<FeedResponseDto>> getAllFeeds(@RequestParam(defaultValue = "1") int page,
+                                                             @RequestParam(defaultValue = "10") int size) {
+
+        if (page <= 1) page = 1;
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Order.asc("id")));
+
+        Page<FeedResponseDto> resData = feedService.getAllFeeds(pageable);
+
+        return ResponseEntity.ok(resData);
+    }
+
 
     @PostMapping("/")
     public ResponseEntity<FeedResponseDto> createFeed(@AuthenticationPrincipal CustomOAuth2UserEntity oauth2User,
