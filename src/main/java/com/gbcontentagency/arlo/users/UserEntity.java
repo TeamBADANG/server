@@ -1,5 +1,7 @@
 package com.gbcontentagency.arlo.users;
 
+import com.gbcontentagency.arlo.comments.CommentEntity;
+import com.gbcontentagency.arlo.feeds.FeedEntity;
 import com.gbcontentagency.arlo.travels.TravelEntity;
 import com.gbcontentagency.arlo.users.dto.OAuth2Response;
 import jakarta.persistence.*;
@@ -33,6 +35,12 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TravelEntity> travels;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FeedEntity> feeds;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> comments;
 
     @Builder
     public UserEntity(String username, OAuth2Response oAuth2Response) {
