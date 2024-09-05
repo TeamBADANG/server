@@ -4,12 +4,10 @@ import com.gbcontentagency.arlo.comments.CommentEntity;
 import com.gbcontentagency.arlo.feeds.FeedEntity;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@NoArgsConstructor
 @Getter
 public class FeedResponseDto {
 

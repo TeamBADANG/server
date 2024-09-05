@@ -1,15 +1,12 @@
 package com.gbcontentagency.arlo.feeds.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor
 @Getter
 public class FeedRequestDto {
 
@@ -27,7 +24,6 @@ public class FeedRequestDto {
 
     private List<String> images;
 
-    @Builder
     public FeedRequestDto(String title, String content, String thumbnailUrl, List<String> images) {
         LocalDate now = LocalDate.now();
         this.createdDate = now;

@@ -2,11 +2,9 @@ package com.gbcontentagency.arlo.travels.dto;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@NoArgsConstructor
 @Getter
 public class TravelRequestDto {
 
