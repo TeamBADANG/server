@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class FeedController {
 
-    FeedService feedService;
-    UserRepository userRepository;
+    private final FeedService feedService;
+    private final UserRepository userRepository;
 
     public FeedController(FeedService feedService, UserRepository userRepository) {
         this.feedService = feedService;
